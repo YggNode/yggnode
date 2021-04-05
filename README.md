@@ -4,6 +4,15 @@ Kind of CDN for rss feed and .torrent files concerned
 Flask server available for requests from RSS clients such as for example [qBittorrent](https://github.com/qbittorrent/qBittorrent) or [Jackett](https://github.com/Jackett/Jackett)
 
 Grab original RSS feed from Yggtorrent.li using user's dedicated passkey and new .torrent files associated with RSS feed.
+Due to sensitive data going through this server such as passkey, servers available for being YggNode have to check following requirements :
+1. Server must contain only 2 interfaces : localhost and for example enp0s6 connected **DIRECTLY** to internet (ip address class will be checked and tracert will certify that)
+2. Server must NOT be container or VM (will be checked)
+3. Server's users must be only root and ygguser. ygguser will be created during installation but no rights will be given to him. (will be checked)
+4. SSH must be enable and launched by default. (otherwise, it will be impossible for admins to connect for enabling this node).
+5. Init script (still WIP) will install all dependencies, block all access to the server (ssh disabled + user's password reconfigured) and will create cron job to update server automatically, start YggNode server instance at startup and update python server.
+6. init script will also get and install let's encrypt certificates for HTTPS access
+
+
 
 ## RSS server side
 User calling for rss feed need to provide two parameters :
