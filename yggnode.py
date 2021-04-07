@@ -5,7 +5,9 @@ import time
 from flask import Flask, request, send_file
 from torrentool.api import Torrent
 
-USER_PASSKEY = ""  # variable to be filled
+#server passkey which has not to bee a validated passkey
+#but valid in means of length and format for getting RSS Feed and .torrent files
+USER_PASSKEY = "ijnXPgYNat3VMnCsqofjUsU5zePmZr9C"
 
 app = Flask(__name__)
 
