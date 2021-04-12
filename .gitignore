@@ -1,3 +1,6 @@
 .idea/
 rss/
 torrents/
+resync.py
+geckodriver.log
+__pycache__/*
