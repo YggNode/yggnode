@@ -1,6 +1,9 @@
 .idea/
 rss/
 torrents/
+annexes.txt
+idCat.txt
+test.py
 resync.py
 geckodriver.log
 __pycache__/*
