@@ -1,8 +1,9 @@
-import os, re, linecache, time, requests, json
+import os, re, linecache, time, requests, json, html
 
 
 def getFromCategory(idCat, CFcookies):
-    url = "https://www4.yggtorrent.li/rss?action=generate&type=cat&id=" + idCat + "&passkey=TNdVQssYfP3GTDnB3ijgE37c8MVvkASH"
+    url = "https://www4.yggtorrent.li/rss?action=generate&type=subcat&id=" + idCat + "&passkey=TNdVQssYfP3GTDnB3ijgE37c8MVvkASH"
+    print(url)
     headers = {'User-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
     return (requests.get(url, cookies=CFcookies, headers=headers)).text
 
@@ -17,6 +18,7 @@ def ManageTorrents(rssData, CFcookies, idCat):
         oldRssTorrentsListId = re.findall("id=[0-9]{6}", oldRssString)
         for oldIdTorrent in oldRssTorrentsListId:
             if oldIdTorrent not in rssTorrentsListId and os.path.isfile("torrents/" + (re.split("=", oldIdTorrent)[1]) + ".torrent"):
+                print("removing --> " + (re.split("=", oldIdTorrent)[1]))
                 os.remove("torrents/" + (re.split("=", oldIdTorrent)[1]) + ".torrent")
 
     headers = {'User-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
@@ -24,6 +26,7 @@ def ManageTorrents(rssData, CFcookies, idCat):
         # if node haven't yet download torrent designated by this ID, then download it through flaresolverr
         if not (os.path.exists("torrents/" + str(re.split("=", torrentId)[1]) + ".torrent")):
             # download function to implement
+            time.sleep(0.5)
             r = requests.get("https://www4.yggtorrent.li/rss/download?id=" + str(
                 re.split("=", torrentId)[1]) + "&passkey=TNdVQssYfP3GTDnB3ijgE37c8MVvkASH", cookies=CFcookies,
                              headers=headers, stream=True)
@@ -31,6 +34,7 @@ def ManageTorrents(rssData, CFcookies, idCat):
             for chunk in r.iter_content(chunk_size=8192):
                 torrentFile.write(chunk)
             torrentFile.close()
+            print("download torrent --> " + str(re.split("=", torrentId)[1]))
 
 
 def initSession(id, serverPath):
@@ -81,6 +85,8 @@ def getCookies(serverPath, idSession):
         cookies[i.get('name')] = i.get('value')
     return cookies
 
+def changeDownloadUrl(rssFeed):
+    return (re.sub("https://www4.yggtorrent.li/rss/", "https://79.142.69.160:36820/", rssFeed))
 
 if __name__ == '__main__':
     # construct string containing ip and port server
@@ -92,16 +98,21 @@ if __name__ == '__main__':
     catlist = getCatRequested()
 
     # infinite loop to resync every X seconds
-    while True:
-        cookies = getCookies(serverPath, id_session)
-        print(cookies)
-        for idCat in catlist:
-            # get rss feed from idCat
-            rssString = getFromCategory(str(idCat), cookies)
-            # download new torrents
-            ManageTorrents(rssString, cookies, str(idCat))
-            # write rss feed and erasing old xml file
-            file = open("rss/" + str(idCat) + ".xml", "w")
-            file.write(rssString)
-            file.close()
-        time.sleep(60)
+    #while True:
+    cookies = getCookies(serverPath, id_session)
+    print(cookies)
+    print(catlist)
+    idCat=2183
+#        for idCat in catlist:
+    print(str(idCat))
+    # get rss feed from idCat
+    rssString = getFromCategory(str(idCat), cookies)
+    # download new torrents
+    #ManageTorrents(rssString, cookies, str(idCat))
+    # write rss feed and erasing old xml file
+    rssString = (changeDownloadUrl(rssString))
+    print(rssString)
+    file = open("rss/" + str(idCat) + ".xml", "w")
+    file.write(rssString)
+    file.close()
+    #time.sleep(300)

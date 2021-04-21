@@ -1,7 +1,7 @@
 import os
 import re
-import time
-
+import time, html
+from flask import Response
 from flask import Flask, request, send_file
 from torrentool.api import Torrent
 
@@ -17,7 +17,6 @@ def index():
     return 'USE : <br>' \
            '/download?id={torrent_id}&passkey={your_passkey}<br>' \
            '/rss?id={category id}&passkey={your_passkey}'
-
 
 @app.route('/download', methods=['GET'])
 def generatingTorrent():
@@ -41,7 +40,6 @@ def generatingTorrent():
     return send_file("torrents/tmp/" + request.args.get("id") + request.args.get("passkey") + ".torrent",
                      as_attachment=True,
                      attachment_filename=(my_torrent.name + ".torrent"))
-
 
 @app.route('/rss', methods=['GET'])
 def generatingRSS():
@@ -67,12 +65,13 @@ def generatingRSS():
 
     # opens last updated rss file corresponding to the category called
     rssFile = open("rss/" + request.args.get("id") + ".xml", "r")
-    txt = rssFile.read()
+    txt = html.unescape(rssFile.read())
     rssFile.close()
     # create a temp rss generated file with both category and passkey as name to avoid potential simultaneous access
     file = open("rss/tmp/temp" + request.args.get("id") + request.args.get("passkey") + ".xml", "w")
     # replace original passkey by the one provided by the user
     txt = re.sub("passkey=[a-zA-Z0-9]{32}", "passkey=" + request.args.get("passkey"), txt)
+    return Response(txt, mimetype='text/xml')
     # save and close temp file
     file.write(txt); file.close()
     # send file
