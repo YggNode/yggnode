@@ -27,8 +27,6 @@ def generatingTorrent():
     # grab torrent file matching id provided
     my_torrent = Torrent.from_file("torrents/" + request.args.get("id") + ".torrent")
     # changing passkey for one transmitted as parameter by user
-    print(((my_torrent.announce_urls[0])[0]))
-    print(re.sub("[a-zA-Z0-9]{32}", request.args.get("passkey"), ((my_torrent.announce_urls[0])[0])))
     newUrlTracker = re.sub("[a-zA-Z0-9]{32}", request.args.get("passkey"), ((my_torrent.announce_urls[0])[0]))
     my_torrent.announce_urls = newUrlTracker
     # write it in temp dir for more clarity
