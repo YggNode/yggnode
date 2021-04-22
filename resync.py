@@ -6,6 +6,7 @@ import time
 import yaml
 
 
+
 def getFromCategory(idCat, CFcookies):
     url = "https://www4.yggtorrent.li/rss?action=generate&type=subcat&id=" + idCat + "&passkey=TNdVQssYfP3GTDnB3ijgE37c8MVvkASH"
     print(url)
@@ -60,10 +61,8 @@ def getCookies(url):
         cookies[i.get('name')] = i.get('value')
     return cookies
 
-
 def changeDownloadUrl(rssFeed, serverURL):
     return re.sub("https://www4.yggtorrent.li/rss/", serverURL + "/", rssFeed)
-
 
 if __name__ == '__main__':
     confFile = open('annexes.yml', 'r')
@@ -89,12 +88,13 @@ if __name__ == '__main__':
             print(str(idCat))
             # get rss feed from idCat
             rssString = getFromCategory(str(idCat), cookies)
-            # download new torrents
-            ManageTorrents(rssString, cookies, str(idCat), catList)
-            # write rss feed and erasing old xml file
-            rssString = (changeDownloadUrl(rssString, nodeURL))
-            file = open("rss/" + str(idCat) + ".xml", "w")
-            file.write(rssString)
-            file.close()
+            if rssString.find("<!DOCTYPE HTML>") == -1:
+                # download new torrents
+                ManageTorrents(rssString, cookies, str(idCat), catList)
+                # write rss feed and erasing old xml file
+                rssString = (changeDownloadUrl(rssString, nodeURL))
+                file = open("rss/" + str(idCat) + ".xml", "w")
+                file.write(rssString)
+                file.close()
         print("en pause")
         time.sleep(300)
