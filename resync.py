@@ -7,8 +7,7 @@ import yaml
 
 
 def getFromCategory(idCat, CFcookies):
-    url = "https://www4.yggtorrent.li/rss?action=generate&type=subcat&id=" + idCat + \
-          "&passkey=TNdVQssYfP3GTDnB3ijgE37c8MVvkASH"
+    url = "https://www4.yggtorrent.li/rss?action=generate&type=subcat&id=" + idCat + "&passkey=TNdVQssYfP3GTDnB3ijgE37c8MVvkASH"
     print(url)
     headers = {'User-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
     return (requests.get(url, cookies=CFcookies, headers=headers)).text
@@ -44,30 +43,12 @@ def ManageTorrents(rssData, CFcookies, idCat, categories):
             torrentFile.close()
             print("download torrent --> " + str(re.split("=", torrentId)[1]))
 
-
-def initSession(id, serverPath):
-    print(serverPath)
-    # initialize session identified by id on serverPath flaresolverr
-    payload = json.dumps({
-        "cmd": "sessions.create",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-        "maxTimeout": 60000,
-        "session": id
-    })
-    headers = {
-        'Content-Type': 'application/json'
-    }
-    # TODO : look at response from request to flaresolverr (200/XXX)
-    requests.request("POST", serverPath + "/v1", headers=headers, data=payload)
-
-
-def getCookies(url, idSession):
+def getCookies(url):
     payload = json.dumps({
         "cmd": "request.get",
         "url": "https://www4.yggtorrent.li",
         "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
         "maxTimeout": 60000,
-        "session": "" + idSession
     })
     headers = {
         'Content-Type': 'application/json'
@@ -85,7 +66,7 @@ def changeDownloadUrl(rssFeed, serverURL):
 
 
 if __name__ == '__main__':
-    confFile = open('annexes.txt', 'r')
+    confFile = open('annexes.yml', 'r')
     serverConfiguration = yaml.safe_load(confFile)
     confFile.close()
 
@@ -96,17 +77,14 @@ if __name__ == '__main__':
     nodeURL = serverConfiguration["node"]["protocol"] + "://" + str(
         serverConfiguration["node"]["ipAdress"]) + ":" + str(serverConfiguration["node"]["port"])
 
-    # initialize session in flaresolverr server
-    id_session = "123456789"
-    initSession(id_session, FlaresolverrPath)
-
     # read category to be syncing on this node.
     catList = serverConfiguration["Categories"]["id"]
     subCatList = serverConfiguration["sub-Categories"]["id"]
 
     # infinite loop to resync every X seconds
     while True:
-        cookies = getCookies(FlaresolverrPath, id_session)
+        cookies = getCookies(FlaresolverrPath)
+        print(cookies)
         for idCat in subCatList + catList:
             print(str(idCat))
             # get rss feed from idCat
