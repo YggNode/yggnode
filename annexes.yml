@@ -9,6 +9,10 @@ node:
 
 sub-Categories:
   id: [2171, 2172, 2173, 2174, 2175, 2176, 2177, 2147, 2148, 2149, 2150, 2151, 2152, 2153, 2154, 2155, 2156, 2157, 2158, 2178, 2179, 2180, 2181, 2182, 2183, 2184, 2185, 2186, 2187, 2168, 2169, 2170, 2159, 2160, 2161, 2162, 2163, 2164, 2165, 2166, 2167]
+  idLabel: ["Linux", "MacOS", "Windows", "Smartphone", "Tablette", "Formation", "Autre", "Karaoké", "Musique", "Samples", "Podcast Radio", "Audio", "Bds", "Comics", "Livres", "Mangas", "Presse", "Emulateurs", "Roms", "Animation", "Animation Série", "Concert", "Documentaire", "Emission TV", "Film", "Série TV", "Spectacle", "Sport", "Vidéo-clips", "Applications", "Cartes", "Divers", "Linux", "MacOS", "Windows", "Microsoft", "Nintendo", "Sony", "Smartphone", "Tablette", "Autre"]
 
 Categories:
   id: [2139, 2140, 2141, 2142, 2143, 2144, 2145]
+  idLabel: ["Audio", "eBook", "Emulation", "Jeu vidéo", "GPS", "Application", "Film/Vidéo"]
+
+yggDomainName: "www4.yggtorrent.li"

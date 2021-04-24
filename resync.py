@@ -7,14 +7,18 @@ import yaml
 
 
 
-def getFromCategory(idCat, CFcookies):
-    url = "https://www4.yggtorrent.li/rss?action=generate&type=subcat&id=" + idCat + "&passkey=TNdVQssYfP3GTDnB3ijgE37c8MVvkASH"
+def getFromCategory(idCat, CFcookies, catList, domainName):
+    if int(idCat) in catList:
+        prefixType = "cat"
+    else :
+        prefixType = "subcat"
+    url = "https://" + domainName + "/rss?action=generate&type=" + prefixType + "&id=" + idCat + "&passkey=TNdVQssYfP3GTDnB3ijgE37c8MVvkASH"
     print(url)
     headers = {'User-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
     return (requests.get(url, cookies=CFcookies, headers=headers)).text
 
 
-def ManageTorrents(rssData, CFcookies, idCat, categories):
+def ManageTorrents(rssData, CFcookies, idCat, categories, domainName):
     # extract from rss feed all id torrent
     rssTorrentsListId = re.findall("id=[0-9]{6}", rssData)
 
@@ -35,7 +39,7 @@ def ManageTorrents(rssData, CFcookies, idCat, categories):
         if not (os.path.exists("torrents/" + str(re.split("=", torrentId)[1]) + ".torrent")):
             # download function to implement
             time.sleep(0.5)
-            r = requests.get("https://www4.yggtorrent.li/rss/download?id=" + str(
+            r = requests.get("https://" + domainName + "/rss/download?id=" + str(
                 re.split("=", torrentId)[1]) + "&passkey=TNdVQssYfP3GTDnB3ijgE37c8MVvkASH", cookies=CFcookies,
                              headers=headers, stream=True)
             torrentFile = open("torrents/" + str(re.split("=", torrentId)[1]) + ".torrent", "wb")
@@ -44,10 +48,10 @@ def ManageTorrents(rssData, CFcookies, idCat, categories):
             torrentFile.close()
             print("download torrent --> " + str(re.split("=", torrentId)[1]))
 
-def getCookies(url):
+def getCookies(url, domainName):
     payload = json.dumps({
         "cmd": "request.get",
-        "url": "https://www4.yggtorrent.li",
+        "url": "https://" + domainName,
         "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
         "maxTimeout": 60000,
     })
@@ -61,8 +65,8 @@ def getCookies(url):
         cookies[i.get('name')] = i.get('value')
     return cookies
 
-def changeDownloadUrl(rssFeed, serverURL):
-    return re.sub("https://www4.yggtorrent.li/rss/", serverURL + "/", rssFeed)
+def changeDownloadUrl(rssFeed, serverURL, domainName):
+    return re.sub("https://" + domainName + "/rss/", serverURL + "/", rssFeed)
 
 if __name__ == '__main__':
     confFile = open('annexes.yml', 'r')
@@ -82,17 +86,18 @@ if __name__ == '__main__':
 
     # infinite loop to resync every X seconds
     while True:
-        cookies = getCookies(FlaresolverrPath)
+        cookies = getCookies(FlaresolverrPath, serverConfiguration["yggDomainName"])
         print(cookies)
         for idCat in subCatList + catList:
             print(str(idCat))
             # get rss feed from idCat
-            rssString = getFromCategory(str(idCat), cookies)
+            rssString = getFromCategory(str(idCat), cookies, catList, serverConfiguration["yggDomainName"])
             if rssString.find("<!DOCTYPE HTML>") == -1:
                 # download new torrents
-                ManageTorrents(rssString, cookies, str(idCat), catList)
+                if idCat not in catList:
+                    ManageTorrents(rssString, cookies, str(idCat), catList, serverConfiguration["yggDomainName"])
                 # write rss feed and erasing old xml file
-                rssString = (changeDownloadUrl(rssString, nodeURL))
+                rssString = (changeDownloadUrl(rssString, nodeURL, serverConfiguration["yggDomainName"]))
                 file = open("rss/" + str(idCat) + ".xml", "w")
                 file.write(rssString)
                 file.close()

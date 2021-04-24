@@ -2,7 +2,8 @@ import os
 import re
 import time
 
-from flask import Flask, request, send_file, Response
+import yaml
+from flask import Flask, request, send_file, Response, render_template
 from torrentool.api import Torrent
 
 # server passkey which has not to bee a validated passkey
@@ -14,9 +15,14 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return 'USE : <br>' \
-           '/download?id={torrent_id}&passkey={your_passkey}<br>' \
-           '/rss?id={category id}&passkey={your_passkey}'
+    confFile = open('annexes.yml', 'r')
+    serverConfiguration = yaml.safe_load(confFile)
+    confFile.close()
+    return "USE : <br> \
+           /download?id={torrent_id}&passkey={your_passkey}<br> \
+           /rss?id={category id}&passkey={your_passkey}<br><br> \
+           Categories List available <a href=" + str(serverConfiguration["node"]["protocol"])\
+           + "://" + str(serverConfiguration["node"]["ipAdress"]) + ":" + str(serverConfiguration["node"]["port"]) + "/links><strong>Here</strong></a>"
 
 
 @app.route('/download', methods=['GET'])
@@ -71,6 +77,28 @@ def remoteTempTorrent():
             if os.path.isfile("torrents/tmp/" + torrentFile):
                 os.remove("torrents/tmp/" + torrentFile)
 
+@app.route('/links', methods=['GET'])
+def generateLinks():
+    if request.args.get("passkey") == None or len(request.args.get("passkey")) != 32:
+        return render_template('form.html')
+    else:
+        confFile = open('annexes.yml', 'r')
+        serverConfiguration = yaml.safe_load(confFile)
+        confFile.close()
+        renderTxt = "Flux généralistes : <br>"
+        for index in range(len(serverConfiguration["Categories"]["id"])):
+            renderTxt += "<strong>" + serverConfiguration["Categories"]["idLabel"][index] + "</strong><br>  " + \
+                         str(serverConfiguration["node"]["protocol"]) + "://" + str(serverConfiguration["node"]["ipAdress"]) +\
+                         ":" + str(serverConfiguration["node"]["port"]) + "/rss?id=" + str(serverConfiguration["Categories"]["id"][index])\
+                         + "&passkey=" + str(request.args.get("passkey")) + "<br>"
+        renderTxt += "<br><br><br>Flux détaillés : <br>"
+        for index in range(len(serverConfiguration["sub-Categories"]["id"])):
+            renderTxt += "<strong>" + serverConfiguration["sub-Categories"]["idLabel"][index] + "</strong><br>  " + \
+                         str(serverConfiguration["node"]["protocol"]) + "://" + str(serverConfiguration["node"]["ipAdress"]) +\
+                         ":" + str(serverConfiguration["node"]["port"]) + "/rss?id=" + str(serverConfiguration["sub-Categories"]["id"][index])\
+                         + "&passkey=" + str(request.args.get("passkey")) + "<br>"
+
+    return renderTxt
 
 if __name__ == '__main__':
     # initialize working environment for python server
