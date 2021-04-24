@@ -7,4 +7,5 @@ test.py
 resync.py
 geckodriver.log
 __pycache__/*
-templates/*
+templates/form_files/*
+logs/

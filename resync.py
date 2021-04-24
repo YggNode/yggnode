@@ -1,13 +1,14 @@
+#! /usr/bin/python3
 import json
 import os
 import re
 import requests
 import time
 import yaml
+import logging
 
 
-
-def getFromCategory(idCat, CFcookies, catList, domainName):
+def getFromCategory(idCat, CFcookies, catList, domainName, logger):
     if int(idCat) in catList:
         prefixType = "cat"
     else :
@@ -18,7 +19,7 @@ def getFromCategory(idCat, CFcookies, catList, domainName):
     return (requests.get(url, cookies=CFcookies, headers=headers)).text
 
 
-def ManageTorrents(rssData, CFcookies, idCat, categories, domainName):
+def ManageTorrents(rssData, CFcookies, idCat, categories, domainName, logger):
     # extract from rss feed all id torrent
     rssTorrentsListId = re.findall("id=[0-9]{6}", rssData)
 
@@ -48,7 +49,7 @@ def ManageTorrents(rssData, CFcookies, idCat, categories, domainName):
             torrentFile.close()
             print("download torrent --> " + str(re.split("=", torrentId)[1]))
 
-def getCookies(url, domainName):
+def getCookies(url, domainName, logger):
     payload = json.dumps({
         "cmd": "request.get",
         "url": "https://" + domainName,
@@ -65,7 +66,7 @@ def getCookies(url, domainName):
         cookies[i.get('name')] = i.get('value')
     return cookies
 
-def changeDownloadUrl(rssFeed, serverURL, domainName):
+def changeDownloadUrl(rssFeed, serverURL, domainName, logger):
     return re.sub("https://" + domainName + "/rss/", serverURL + "/", rssFeed)
 
 if __name__ == '__main__':
@@ -73,33 +74,44 @@ if __name__ == '__main__':
     serverConfiguration = yaml.safe_load(confFile)
     confFile.close()
 
+    if not (os.path.exists(os.getcwd() + "/logs/")):
+        os.mkdir(os.getcwd() + '/logs')
+
+    logging.basicConfig(level=logging.INFO, filename=os.getcwd() + "/esync.log")
+
+
     # construct string containing ip and port server
     FlaresolverrPath = "http://" + str(serverConfiguration["flaresolverr"]["ipAdress"]) + ":" + \
                        str(serverConfiguration["flaresolverr"]["port"])
 
     nodeURL = serverConfiguration["node"]["protocol"] + "://" + str(
         serverConfiguration["node"]["ipAdress"]) + ":" + str(serverConfiguration["node"]["port"])
-
+    logging.info("Server URL : "+nodeURL)
     # read category to be syncing on this node.
     catList = serverConfiguration["Categories"]["id"]
     subCatList = serverConfiguration["sub-Categories"]["id"]
-
+    logging.info("Successfully load categories to sync")
     # infinite loop to resync every X seconds
     while True:
-        cookies = getCookies(FlaresolverrPath, serverConfiguration["yggDomainName"])
-        print(cookies)
+        cookies = getCookies(FlaresolverrPath, serverConfiguration["yggDomainName"], logging)
+        logging.info(cookies)
         for idCat in subCatList + catList:
-            print(str(idCat))
+            logging.info(str(idCat))
             # get rss feed from idCat
-            rssString = getFromCategory(str(idCat), cookies, catList, serverConfiguration["yggDomainName"])
+            rssString = getFromCategory(str(idCat), cookies, catList, serverConfiguration["yggDomainName"], logging)
             if rssString.find("<!DOCTYPE HTML>") == -1:
+                logging.info("Correct response")
                 # download new torrents
                 if idCat not in catList:
-                    ManageTorrents(rssString, cookies, str(idCat), catList, serverConfiguration["yggDomainName"])
+                    logging.info("torrent management")
+                    ManageTorrents(rssString, cookies, str(idCat), catList, serverConfiguration["yggDomainName"], logging)
                 # write rss feed and erasing old xml file
-                rssString = (changeDownloadUrl(rssString, nodeURL, serverConfiguration["yggDomainName"]))
+                rssString = (changeDownloadUrl(rssString, nodeURL, serverConfiguration["yggDomainName"], logging))
                 file = open(os.getcwd() + "/rss/" + str(idCat) + ".xml", "w")
                 file.write(rssString)
                 file.close()
-        print("en pause")
+                logging.info("RSS feed correctly received and analyzed")
+            else:
+                logging.info("Incorrect response : possible cloudfare captcha or new DNS")
+        logging.info("Resync terminated : next in 5 mins")
         time.sleep(300)
