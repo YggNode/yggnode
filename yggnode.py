@@ -15,7 +15,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    confFile = open('annexes.yml', 'r')
+    confFile = open(os.getcwd() + "/annexes.yml", 'r')
     serverConfiguration = yaml.safe_load(confFile)
     confFile.close()
     return "USE : <br> \
@@ -28,17 +28,17 @@ def index():
 @app.route('/download', methods=['GET'])
 def generatingTorrent():
     remoteTempTorrent()
-    if not (os.path.isfile("torrents/" + request.args.get("id") + ".torrent")):
+    if not (os.path.isfile(os.getcwd() + "/torrents/" + request.args.get("id") + ".torrent")):
         return "torrent unavailable"
     # grab torrent file matching id provided
-    my_torrent = Torrent.from_file("torrents/" + request.args.get("id") + ".torrent")
+    my_torrent = Torrent.from_file(os.getcwd() + "/torrents/" + request.args.get("id") + ".torrent")
     # changing passkey for one transmitted as parameter by user
     newUrlTracker = re.sub("[a-zA-Z0-9]{32}", request.args.get("passkey"), ((my_torrent.announce_urls[0])[0]))
     my_torrent.announce_urls = newUrlTracker
     # write it in temp dir for more clarity
-    my_torrent.to_file("torrents/tmp/" + request.args.get("id") + request.args.get("passkey") + ".torrent")
+    my_torrent.to_file(os.getcwd() + "/torrents/tmp/" + request.args.get("id") + request.args.get("passkey") + ".torrent")
     # send torrent file
-    return send_file("torrents/tmp/" + request.args.get("id") + request.args.get("passkey") + ".torrent",
+    return send_file(os.getcwd() + "/torrents/tmp/" + request.args.get("id") + request.args.get("passkey") + ".torrent",
                      as_attachment=True,
                      attachment_filename=(my_torrent.name + ".torrent"),
                      mimetype='application/x-bittorrent')
@@ -56,11 +56,11 @@ def generatingRSS():
     if request.args.get("passkey") is None:
         return "passkey not provided : please send one as parameter 'passkey'"
 
-    if not (os.path.isfile("rss/" + request.args.get("id") + ".xml")):
+    if not (os.path.isfile(os.getcwd() + "/rss/" + request.args.get("id") + ".xml")):
         return "rss file unavailable for this category at the moment"
 
     # opens last updated rss file corresponding to the category called
-    rssFile = open("rss/" + request.args.get("id") + ".xml", "r")
+    rssFile = open(os.getcwd() + "/rss/" + request.args.get("id") + ".xml", "r")
     txt = rssFile.read()
     rssFile.close()
     # create a temp rss generated file with both category and passkey as name to avoid potential simultaneous access
@@ -72,17 +72,16 @@ def generatingRSS():
 def remoteTempTorrent():
     now = time.time()
     # browses all files and delete every having more than 5 secs of existence
-    for torrentFile in os.listdir("torrents/tmp/"):
-        if os.stat("torrents/tmp/" + torrentFile).st_mtime < now - 1:
-            if os.path.isfile("torrents/tmp/" + torrentFile):
-                os.remove("torrents/tmp/" + torrentFile)
+    for torrentFile in os.listdir(os.getcwd() + "/torrents/tmp/"):
+        if os.stat(os.getcwd() + "/torrents/tmp/" + torrentFile).st_mtime < now - 1:
+            os.remove(os.getcwd() + "/torrents/tmp/" + torrentFile)
 
 @app.route('/links', methods=['GET'])
 def generateLinks():
     if request.args.get("passkey") == None or len(request.args.get("passkey")) != 32:
         return render_template('form.html')
     else:
-        confFile = open('annexes.yml', 'r')
+        confFile = open(os.getcwd() + '/annexes.yml', 'r')
         serverConfiguration = yaml.safe_load(confFile)
         confFile.close()
         renderTxt = "Flux généralistes : <br>"
@@ -102,11 +101,11 @@ def generateLinks():
 
 if __name__ == '__main__':
     # initialize working environment for python server
-    if not (os.path.exists("rss/")):
-        os.mkdir('rss')
-    if not (os.path.exists("torrents/")):
-        os.mkdir('torrents')
-    if not (os.path.exists("torrents/tmp")):
-        os.mkdir('torrents/tmp')
+    if not (os.path.exists(os.getcwd() + "/rss/")):
+        os.mkdir(os.getcwd() + '/rss')
+    if not (os.path.exists(os.getcwd() + "/torrents/")):
+        os.mkdir(os.getcwd() + '/torrents')
+    if not (os.path.exists(os.getcwd() + "/torrents/tmp")):
+        os.mkdir(os.getcwd() + '/torrents/tmp')
 
     app.run(host='0.0.0.0', port=5000)
