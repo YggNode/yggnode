@@ -1,6 +1,16 @@
 # YggNode
 Kind of CDN for rss feed and .torrent files concerned
 
+# Installation :
+You have just to download [this file](https://raw.githubusercontent.com/YggNode/yggnode/main/init.sh) to install automatically all server dependencies and requirements.
+
+***Be carefull to execute it as root in root home directory***
+
+It's dangerous but in future, such requirement will not be required
+
+
+# Details
+
 Flask server available for requests from RSS clients such as for example [qBittorrent](https://github.com/qbittorrent/qBittorrent) or [Jackett](https://github.com/Jackett/Jackett)
 
 Grab original RSS feed from Yggtorrent.li using user's dedicated passkey and new .torrent files associated with RSS feed.
@@ -11,6 +21,9 @@ Due to sensitive data going through this server such as passkey, servers availab
 4. SSH must be enable and launched by default. (otherwise, it will be impossible for admins to connect for enabling this node).
 5. Init script (still WIP) will install all dependencies, block all access to the server (ssh disabled + user's password reconfigured) and will create cron job to update server automatically, start YggNode server instance at startup and update python server.
 6. init script will also get and install let's encrypt certificates for HTTPS access
+
+
+
 
 
 
