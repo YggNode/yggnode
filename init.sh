@@ -79,6 +79,8 @@ WantedBy=multi-user.target" > /lib/systemd/system/resync.service
 systemctl daemon-reload
 systemctl enable yggnode.service
 systemctl enable resync.service
+sed -i "s/flareServerIp/127.0.0.1/g" yggnode/annexes.yml
+sed -i "s/DomainNameOrIp/${serverAdress}/g" yggnode/annexes.yml
 systemctl start yggnode
 systemctl start resync
 echo "==============================="

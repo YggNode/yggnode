@@ -1,17 +1,17 @@
 # Details about flaresolverr server location
 # Accessing to it by default using http protocol
 flaresolverr:
-  ipAdress: 192.168.1.115
+  ipAdress: flareServerIp
   port: 8191
 
 # Details about node Server
 node:
 # Example : rss.example.net
-  ipAdress: 127.0.0.1
+  ipAdress: DomainNameOrIp
 # Port where service is listening. Even with https enable, port could be randomly different such as 20385 or anything else.
-  port: 5000
+  port: 443
 # Protocol to use to access this server
-  protocol: http
+  protocol: https
 
 # YGG categories details including idNumber and name associated with.
 sub-Categories:
