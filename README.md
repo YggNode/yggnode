@@ -4,7 +4,9 @@ Kind of CDN for rss feed and .torrent files concerned
 # Installation :
 You have just to download [this file](https://raw.githubusercontent.com/YggNode/yggnode/main/init.sh) to install automatically all server dependencies and requirements.
 
-***Be carefull to execute it as root in root home directory***
+Initial synchronisation will take around 1 hour for approximately 3720 torrents
+
+***run the installation script with a user belonging to the sudo group (root not recommended)***
 
 It's dangerous but in future, such requirement will not be required
 
