@@ -23,7 +23,9 @@ def index():
            /download?id={torrent_id}&passkey={your_passkey}<br> \
            /rss?id={category id}&passkey={your_passkey}<br><br> \
            Categories List available <a href=" + str(serverConfiguration["node"]["protocol"])\
-           + "://" + str(serverConfiguration["node"]["ipAdress"]) + ":" + str(serverConfiguration["node"]["port"]) + "/links><strong>Here</strong></a>"
+           + "://" + str(serverConfiguration["node"]["ipAdress"]) + ":" + str(serverConfiguration["node"]["port"]) + "/links><strong>Here</strong></a>"+ \
+           "<br><br><a href=" + str(serverConfiguration["node"]["protocol"]) + "://" + str(serverConfiguration["node"]["ipAdress"]) + ":"\
+                             + str(serverConfiguration["node"]["port"]) + "/status>Server last time resynchronization</a>"
 
 
 @app.route('/download', methods=['GET'])
@@ -74,7 +76,7 @@ def remoteTempTorrent():
     now = time.time()
     # browses all files and delete every having more than 5 secs of existence
     for torrentFile in os.listdir(os.getcwd() + "/torrents/tmp/"):
-        if os.stat(os.getcwd() + "/torrents/tmp/" + torrentFile).st_mtime < now - 1:
+        if os.stat(os.getcwd() + "/torrents/tmp/" + torrentFile).st_mtime < now:
             os.remove(os.getcwd() + "/torrents/tmp/" + torrentFile)
 
 @app.route('/links', methods=['GET'])
@@ -97,6 +99,21 @@ def generateLinks():
                          str(serverConfiguration["node"]["protocol"]) + "://" + str(serverConfiguration["node"]["ipAdress"]) +\
                          ":" + str(serverConfiguration["node"]["port"]) + "/rss?id=" + str(serverConfiguration["sub-Categories"]["id"][index])\
                          + "&passkey=" + str(request.args.get("passkey")) + "<br>"
+
+    return renderTxt
+
+@app.route('/status', methods=['GET'])
+def getStatus():
+    confFile = open(os.getcwd() + '/annexes.yml', 'r')
+    serverConfiguration = yaml.safe_load(confFile)
+    confFile.close()
+    now = time.time()
+    renderTxt = ""
+    for index in range(len(serverConfiguration["Categories"]["id"])):
+        renderTxt += "<strong>" + serverConfiguration["Categories"]["idLabel"][index] + "</strong> : " + str(time.ctime(os.stat(os.getcwd() + "/rss/" + str(serverConfiguration["Categories"]["id"][index]) + ".xml").st_mtime)) + "<br>"
+    renderTxt += "<br><br>"
+    for index in range(len(serverConfiguration["sub-Categories"]["id"])):
+        renderTxt += "<strong>" + serverConfiguration["sub-Categories"]["idLabel"][index] + "</strong> : " + str(time.ctime(os.stat(os.getcwd() + "/rss/" + str(serverConfiguration["sub-Categories"]["id"][index]) + ".xml").st_mtime)) + "<br>"
 
     return renderTxt
 
