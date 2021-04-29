@@ -78,7 +78,7 @@ After=multi-user.target
 Type=simple
 User=$USER
 ExecStart=sudo /usr/bin/python3 $HOME/yggnode/resync.py
-#Restart=on-failure
+Restart=on-failure
 WorkingDirectory=$HOME/yggnode
 
 [Install]
