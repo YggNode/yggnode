@@ -23,7 +23,9 @@ def index():
            /download?id={torrent_id}&passkey={your_passkey}<br> \
            /rss?id={category id}&passkey={your_passkey}<br><br> \
            Categories List available <a href=" + str(serverConfiguration["node"]["protocol"])\
-           + "://" + str(serverConfiguration["node"]["ipAdress"]) + ":" + str(serverConfiguration["node"]["port"]) + "/links><strong>Here</strong></a>"
+           + "://" + str(serverConfiguration["node"]["ipAdress"]) + ":" + str(serverConfiguration["node"]["port"]) + "/links><strong>Here</strong></a>"+ \
+           "<br><br><a href=" + str(serverConfiguration["node"]["protocol"]) + "://" + str(serverConfiguration["node"]["ipAdress"]) + ":"\
+                             + str(serverConfiguration["node"]["port"]) + "/status>Server last time resynchronization</a>"
 
 
 @app.route('/download', methods=['GET'])
