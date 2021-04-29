@@ -16,7 +16,7 @@ def getFromCategory(idCat, CFcookies, catList, domainName, logger):
     url = "https://" + domainName + "/rss?action=generate&type=" + prefixType + "&id=" + idCat + "&passkey=TNdVQssYfP3GTDnB3ijgE37c8MVvkASH"
     print(url)
     headers = {'User-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
-    return (requests.get(url, cookies=CFcookies, headers=headers)).text
+    return (requests.get(url, cookies=CFcookies, headers=headers, timeout=25)).text
 
 
 def ManageTorrents(rssData, CFcookies, idCat, categories, domainName, logger):
@@ -38,11 +38,9 @@ def ManageTorrents(rssData, CFcookies, idCat, categories, domainName, logger):
     for torrentId in rssTorrentsListId:
         # if node haven't yet download torrent designated by this ID, then download it through flaresolverr
         if not (os.path.exists(os.getcwd() + "/torrents/" + str(re.split("=", torrentId)[1]) + ".torrent")):
-            # download function to implement
-            time.sleep(0.5)
             r = requests.get("https://" + domainName + "/rss/download?id=" + str(
                 re.split("=", torrentId)[1]) + "&passkey=TNdVQssYfP3GTDnB3ijgE37c8MVvkASH", cookies=CFcookies,
-                             headers=headers, stream=True)
+                             headers=headers, stream=True, timeout=25)
             torrentFile = open(os.getcwd() + "/torrents/" + str(re.split("=", torrentId)[1]) + ".torrent", "wb")
             for chunk in r.iter_content(chunk_size=8192):
                 torrentFile.write(chunk)
@@ -77,7 +75,7 @@ if __name__ == '__main__':
     if not (os.path.exists(os.getcwd() + "/logs/")):
         os.mkdir(os.getcwd() + '/logs')
 
-    logging.basicConfig(level=logging.INFO, filename=os.getcwd() + "/esync.log")
+    logging.basicConfig(level=logging.INFO, filename=os.getcwd() + "/resync.log")
 
 
     # construct string containing ip and port server
