@@ -10,6 +10,8 @@ Initial synchronisation will take around 1 hour for approximately 3720 torrents
 
 It's dangerous but in future, such requirement will not be required
 
+Docker install *-WIP-* on this Fork : [LimeDrive/yggnode-docker](https://github.com/LimeDrive/yggnode-docker/)
+
 
 # Details
 
