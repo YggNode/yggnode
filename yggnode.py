@@ -31,7 +31,7 @@ def index():
 @app.route('/download', methods=['GET'])
 def generatingTorrent():
     remoteTempTorrent()
-    if not (os.path.isfile(os.getcwd() + "/torrents/" + request.args.get("id") + ".torrent")):
+    if not (os.path.isfile(os.getcwd() + "/torrents/" + str(int(request.args.get("id"))) + ".torrent")):
         return "torrent unavailable"
     # grab torrent file matching id provided
     my_torrent = Torrent.from_file(os.getcwd() + "/torrents/" + request.args.get("id") + ".torrent")
@@ -63,7 +63,7 @@ def generatingRSS():
         return "rss file unavailable for this category at the moment"
 
     # opens last updated rss file corresponding to the category called
-    rssFile = open(os.getcwd() + "/rss/" + request.args.get("id") + ".xml", "r")
+    rssFile = open(os.getcwd() + "/rss/" + str(int(request.args.get("id"))) + ".xml", "r")
     txt = rssFile.read()
     rssFile.close()
     # create a temp rss generated file with both category and passkey as name to avoid potential simultaneous access
@@ -126,4 +126,4 @@ if __name__ == '__main__':
     if not (os.path.exists(os.getcwd() + "/torrents/tmp")):
         os.mkdir(os.getcwd() + '/torrents/tmp')
 
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='localhost', port=5000)
