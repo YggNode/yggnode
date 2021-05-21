@@ -117,13 +117,6 @@ def getStatus():
 
     return renderTxt
 
+# need to keep ?
 if __name__ == '__main__':
-    # initialize working environment for python server
-    if not (os.path.exists(os.getcwd() + "/rss/")):
-        os.mkdir(os.getcwd() + '/rss')
-    if not (os.path.exists(os.getcwd() + "/torrents/")):
-        os.mkdir(os.getcwd() + '/torrents')
-    if not (os.path.exists(os.getcwd() + "/torrents/tmp")):
-        os.mkdir(os.getcwd() + '/torrents/tmp')
-
     app.run(host='0.0.0.0', port=5000)
