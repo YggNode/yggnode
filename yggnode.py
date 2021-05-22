@@ -114,16 +114,7 @@ def getStatus():
     renderTxt += "<br><br>"
     for index in range(len(serverConfiguration["sub-Categories"]["id"])):
         renderTxt += "<strong>" + serverConfiguration["sub-Categories"]["idLabel"][index] + "</strong> : " + str(time.ctime(os.stat(os.getcwd() + "/rss/" + str(serverConfiguration["sub-Categories"]["id"][index]) + ".xml").st_mtime)) + "<br>"
-
     return renderTxt
 
 if __name__ == '__main__':
-    # initialize working environment for python server
-    if not (os.path.exists(os.getcwd() + "/rss/")):
-        os.mkdir(os.getcwd() + '/rss')
-    if not (os.path.exists(os.getcwd() + "/torrents/")):
-        os.mkdir(os.getcwd() + '/torrents')
-    if not (os.path.exists(os.getcwd() + "/torrents/tmp")):
-        os.mkdir(os.getcwd() + '/torrents/tmp')
-
     app.run(host='localhost', port=5000)

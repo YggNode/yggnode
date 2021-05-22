@@ -68,12 +68,20 @@ def changeDownloadUrl(rssFeed, serverURL, domainName, logger):
     return re.sub("https://" + domainName + "/rss/", serverURL + "/", rssFeed)
 
 if __name__ == '__main__':
+    # initialize working environment for python server
+    if not (os.path.exists(os.getcwd() + "/rss/")):
+        os.mkdir(os.getcwd() + '/rss')
+    if not (os.path.exists(os.getcwd() + "/torrents/")):
+        os.mkdir(os.getcwd() + '/torrents')
+    if not (os.path.exists(os.getcwd() + "/torrents/tmp")):
+        os.mkdir(os.getcwd() + '/torrents/tmp')
+    logging.basicConfig(format='%(levelname)s - %(asctime)s ::   %(message)s', datefmt='%d/%m/%Y %I:%M:%S', level=logging.INFO, filename=os.getcwd() + "/resync.log")
+
     confFile = open(os.getcwd() + "/annexes.yml", 'r')
     serverConfiguration = yaml.safe_load(confFile)
     confFile.close()
 
-    if not (os.path.exists(os.getcwd() + "/logs/")):
-        os.mkdir(os.getcwd() + '/logs')
+
 
     logging.basicConfig(level=logging.INFO, filename=os.getcwd() + "/resync.log")
 
