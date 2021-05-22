@@ -19,7 +19,7 @@ sudo docker run -d \
   --name=flaresolverr \
   -p 8191:8191 \
   -e LOG_LEVEL=info \
-  --restart unless-stopped \
+  --restart on-failure \
   ghcr.io/flaresolverr/flaresolverr:latest
 sudo rm /etc/nginx/sites-enabled/default
 sudo tee -a /etc/nginx/sites-enabled/default <<EOF

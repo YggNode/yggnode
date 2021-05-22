@@ -114,9 +114,7 @@ def getStatus():
     renderTxt += "<br><br>"
     for index in range(len(serverConfiguration["sub-Categories"]["id"])):
         renderTxt += "<strong>" + serverConfiguration["sub-Categories"]["idLabel"][index] + "</strong> : " + str(time.ctime(os.stat(os.getcwd() + "/rss/" + str(serverConfiguration["sub-Categories"]["id"][index]) + ".xml").st_mtime)) + "<br>"
-
     return renderTxt
 
-# need to keep ?
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='localhost', port=5000)
