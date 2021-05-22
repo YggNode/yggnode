@@ -91,9 +91,17 @@ if __name__ == '__main__':
     logging.info("Successfully load categories to sync")
     # infinite loop to resync every X seconds
     while True:
-        cookies = getCookies(FlaresolverrPath, serverConfiguration["yggDomainName"], logging)
-        logging.info(cookies)
-        for idCat in subCatList + catList:
+        # check fo cloudfare activation
+        response = requests.get("https://" + serverConfiguration["yggDomainName"], timeout=10)
+        if not response.ok:
+            # cloudfare enable : cookies needed for accessing website
+            cookies = getCookies(FlaresolverrPath, serverConfiguration["yggDomainName"], logging)
+            logging.info(cookies)
+        else:
+            # cloudfare disabled : no need of cookies
+            cookies = dict()
+            logging.info("no need of cookies : cloudfare not present on site")
+        for idCat in catList + subCatList:
             logging.info(str(idCat))
             # get rss feed from idCat
             rssString = getFromCategory(str(idCat), cookies, catList, serverConfiguration["yggDomainName"], logging)
