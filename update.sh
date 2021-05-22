@@ -1,9 +1,10 @@
 #!/bin/bash
 sudo systemctl stop yggnode
 sudo systemctl stop resync
-mv annexes.yml annexes.yml.old
+cp annexes.yml annexes.yml.old
+git reset --hard
 git pull
-sudo bash update_installer.sh
 mv annexes.yml.old annexes.yml
+sudo bash update_installer.sh
 sudo systemctl start yggnode
 sudo systemctl start resync
