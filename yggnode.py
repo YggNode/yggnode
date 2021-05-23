@@ -19,7 +19,8 @@ def index():
     confFile = open(os.getcwd() + "/annexes.yml", 'r')
     serverConfiguration = yaml.safe_load(confFile)
     confFile.close()
-    return "USE : <br> \
+    return "<head><title>index</title></head>" \
+           "USE : <br> \
            /download?id={torrent_id}&passkey={your_passkey}<br> \
            /rss?id={category id}&passkey={your_passkey}<br><br> \
            Categories List available <a href=" + str(serverConfiguration["node"]["protocol"])\
@@ -54,13 +55,13 @@ def generatingRSS():
     if request.args.get("id") is None or int(request.args.get("id")) < 2139 \
             or int(request.args.get("id")) == 2146 \
             or int(request.args.get("id")) > 2187:
-        return "bad category requested"
+        return "<head><title>RSS generator</title></head>bad category requested"
     # check if passkey with valid format is provided
     if request.args.get("passkey") is None:
-        return "passkey not provided : please send one as parameter 'passkey'"
+        return "<head><title>RSS generator</title></head>passkey not provided : please send one as parameter 'passkey'"
 
     if not (os.path.isfile(os.getcwd() + "/rss/" + request.args.get("id") + ".xml")):
-        return "rss file unavailable for this category at the moment"
+        return "<head><title>RSS generator</title></head>rss file unavailable for this category at the moment"
 
     # opens last updated rss file corresponding to the category called
     rssFile = open(os.getcwd() + "/rss/" + str(int(request.args.get("id"))) + ".xml", "r")
@@ -87,7 +88,7 @@ def generateLinks():
         confFile = open(os.getcwd() + '/annexes.yml', 'r')
         serverConfiguration = yaml.safe_load(confFile)
         confFile.close()
-        renderTxt = "Flux généralistes : <br>"
+        renderTxt = "<head><title>RSS links generator</title></head>Flux généralistes : <br>"
         for index in range(len(serverConfiguration["Categories"]["id"])):
             renderTxt += "<strong>" + serverConfiguration["Categories"]["idLabel"][index] + "</strong><br>  " + \
                          str(serverConfiguration["node"]["protocol"]) + "://" + str(serverConfiguration["node"]["ipAdress"]) +\
@@ -108,13 +109,26 @@ def getStatus():
     serverConfiguration = yaml.safe_load(confFile)
     confFile.close()
     now = time.time()
-    renderTxt = ""
+    renderTxt = "<head><title>last resync</title></head>Time since last synchronisation:<br><br>"
     for index in range(len(serverConfiguration["Categories"]["id"])):
-        renderTxt += "<strong>" + serverConfiguration["Categories"]["idLabel"][index] + "</strong> : " + str(time.ctime(os.stat(os.getcwd() + "/rss/" + str(serverConfiguration["Categories"]["id"][index]) + ".xml").st_mtime)) + "<br>"
+        if not os.path.exists (os.getcwd() + "/rss/" + str(serverConfiguration["Categories"]["id"][index]) + ".xml"):
+            renderTxt += "<strong>" + serverConfiguration["Categories"]["idLabel"][index] + "</strong> : never synchronized<br>"
+        else:
+            renderTxt += "<strong>" + serverConfiguration["Categories"]["idLabel"][index] + "</strong> : " + str(timeUnderstandable(now - os.stat(os.getcwd() + "/rss/" + str(serverConfiguration["Categories"]["id"][index]) + ".xml").st_mtime)) + "<br>"
     renderTxt += "<br><br>"
     for index in range(len(serverConfiguration["sub-Categories"]["id"])):
-        renderTxt += "<strong>" + serverConfiguration["sub-Categories"]["idLabel"][index] + "</strong> : " + str(time.ctime(os.stat(os.getcwd() + "/rss/" + str(serverConfiguration["sub-Categories"]["id"][index]) + ".xml").st_mtime)) + "<br>"
+        if not os.path.exists (os.getcwd() + "/rss/" + str(serverConfiguration["sub-Categories"]["id"][index]) + ".xml"):
+            renderTxt += "<strong>" + serverConfiguration["sub-Categories"]["idLabel"][index] + "</strong> : never synchronized<br>"
+        else :
+            renderTxt += "<strong>" + serverConfiguration["sub-Categories"]["idLabel"][index] + "</strong> : " + str(timeUnderstandable(now - os.stat(os.getcwd() + "/rss/" + str(serverConfiguration["sub-Categories"]["id"][index]) + ".xml").st_mtime)) + "<br>"
     return renderTxt
+
+def timeUnderstandable(sec):
+    intSeconds = int(sec)
+    hour = intSeconds // 3600
+    min = (intSeconds - hour*3600)//60
+    sec = intSeconds - hour*3600 - min * 60
+    return "%02dH %02dm %02ds" % (hour, min, sec)
 
 if __name__ == '__main__':
     app.run(host='localhost', port=5000)
