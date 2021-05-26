@@ -142,7 +142,7 @@ if __name__ == '__main__':
         serverConfiguration = yaml.load(yamlfile, Loader=yaml.FullLoader)
     # Create folders if doesn't exist.
     os.makedirs("logs", exist_ok=True)
-    os.makedirs("torrents/temp", exist_ok=True)
+    os.makedirs("torrents/tmp", exist_ok=True)
     os.makedirs("rss", exist_ok=True)
     # Logging config
     logging.basicConfig(
