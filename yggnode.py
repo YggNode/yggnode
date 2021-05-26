@@ -116,23 +116,25 @@ def getStatus():
     dataCat = dict()
     dataSub = dict()   
     for index in range(len(cfg["Categories"]["id"])):
-        now = time.time()
-        osModTime = os.stat(f'rss/{str(cfg["Categories"]["id"][index])}.xml').st_mtime
-        lastModTime = now - osModTime
-        val1 = time.strftime(" %d/%m/%Y --- %H:%M:%S ", time.localtime(osModTime))
-        val2 = humanize.naturaltime(lastModTime, minimum_unit="milliseconds")
-        val = (val1, val2)
-        key = cfg["Categories"]["idLabel"][index]
-        dataCat[key] = val
+        if os.path.exists(f'rss/{str(cfg["Categories"]["id"][index])}.xml'):
+            now = time.time()
+            osModTime = os.stat(f'rss/{str(cfg["Categories"]["id"][index])}.xml').st_mtime
+            lastModTime = now - osModTime
+            val1 = time.strftime(" %d/%m/%Y --- %H:%M:%S ", time.localtime(osModTime))
+            val2 = humanize.naturaltime(lastModTime, minimum_unit="milliseconds")
+            val = (val1, val2)
+            key = cfg["Categories"]["idLabel"][index]
+            dataCat[key] = val
     for index in range(len(cfg["sub-Categories"]["id"])):
-        now = time.time()
-        osModTime = os.stat(f'rss/{str(cfg["sub-Categories"]["id"][index])}.xml').st_mtime
-        lastModTime = now - osModTime
-        val1 = time.strftime(" %d/%m/%Y --- %H:%M:%S ", time.localtime(osModTime))
-        val2 = humanize.naturaltime(lastModTime, minimum_unit="milliseconds")
-        val = (val1, val2)
-        key = cfg["sub-Categories"]["idLabel"][index]
-        dataSub[key] = val
+        if os.path.exists(f'rss/{str(cfg["sub-Categories"]["id"][index])}.xml'):
+            now = time.time()
+            osModTime = os.stat(f'rss/{str(cfg["sub-Categories"]["id"][index])}.xml').st_mtime
+            lastModTime = now - osModTime
+            val1 = time.strftime(" %d/%m/%Y --- %H:%M:%S ", time.localtime(osModTime))
+            val2 = humanize.naturaltime(lastModTime, minimum_unit="milliseconds")
+            val = (val1, val2)
+            key = cfg["sub-Categories"]["idLabel"][index]
+            dataSub[key] = val
     data = {**dataCat, **dataSub}
     return render_template('stats.html', server=server, name=name, data=data)
 
