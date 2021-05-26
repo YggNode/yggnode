@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+<!-- Need Data dict -->
+{% block content %}
+    <!-- Home content -->
+    <div class="container">
+        <div class="text-center">
+        </br>
+            <h1>YggNode : {{ server }}</h1>
+            <p class="lead">Fetch Rss from YggTorrent</p>
+            <p>YggNode v2.0.0</p>
+        </div>
+    </div>
+    </br>
+    <!-- Lists Status content -->
+    <div class="bootstrap_datatables">
+        <div class="container">
+            <div class="row py-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="card rounded shadow border-0">
+                        <div class="card-body p-5 bg-white rounded">
+                            <div class="table-responsive">
+                                <table id="example" style="width: 100%" class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Yggnode Flux</th>
+                                            <th>Last time Sync</th>
+                                            <th>Counter Sync</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for k, v in data.items() %}
+                                        <tr>
+                                            <td>{{ k }}</td>
+                                            <td>{{ v[0] }}</td>
+                                            <td>{{ v[1] }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
