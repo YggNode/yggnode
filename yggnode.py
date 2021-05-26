@@ -16,7 +16,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    with open("config/annexes.yml", 'r') as ymlfile:
+    with open("annexes.yml", 'r') as ymlfile:
         cfg = yaml.load(ymlfile, Loader=yaml.FullLoader)
     server = f'{str(cfg["node"]["protocol"])}://{str(cfg["node"]["ipAdress"])}:{str(cfg["node"]["port"])}'
     name = f'{str(cfg["node"]["ipAdress"])}'
@@ -77,7 +77,7 @@ def remoteTempTorrent():
 @app.route('/links', methods=['GET'])
 def generateLinks():
     # Config file
-    with open("config/annexes.yml", 'r') as ymlfile:
+    with open("annexes.yml", 'r') as ymlfile:
         cfg = yaml.load(ymlfile, Loader=yaml.FullLoader)
     # Set variables
     server = f'{str(cfg["node"]["protocol"])}://{str(cfg["node"]["ipAdress"])}:{str(cfg["node"]["port"])}'
@@ -108,7 +108,7 @@ def generateLinks():
 
 @app.route('/status', methods=['GET'])
 def getStatus():
-    with open("config/annexes.yml", 'r') as ymlfile:
+    with open("annexes.yml", 'r') as ymlfile:
         cfg = yaml.load(ymlfile, Loader=yaml.FullLoader)
     humanize.i18n.activate("fr_FR")
     server = f'{str(cfg["node"]["protocol"])}://{str(cfg["node"]["ipAdress"])}:{str(cfg["node"]["port"])}'
