@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <!-- Node content -->
+    <div class="container">
+        <div class="text-center">
+        </br>
+            <h1>YggNode : {{ name }}</h1>
+            <p class="lead">Fetch Rss from YggTorrent</p>
+            <p>YggNode v2.0.0</p>
+        </div>
+    </div>
+    <!-- Input content-->
+    </br>
+    <div class="card w-50 mx-auto text-white bg-secondary text-center">
+        <div class="card-body">
+            <h5 class="card-title">User Passkey :</h5>
+            <form method="GET" action="">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="passkey" placeholder="Enter your passkey" name="passkey">
+                </div>
+                </br>
+                <button type="submit" class="btn btn-success">Submit</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

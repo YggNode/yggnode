@@ -44,7 +44,11 @@ def manage_Torrents(rssData, cookies, idCat, categories, domainName):
         torrentId = re.split("=", fullTorrentId)[1]
         if not os.path.exists(f"torrents/{torrentId}.torrent"):
             url = f"https://{domainName}/rss/download?id={torrentId}&passkey=TNdVQssYfP3GTDnB3ijgE37c8MVvkASH"
-            get_Torrents(url, cookies, torrentId)
+            try:
+                get_Torrents(url, cookies, torrentId)
+            except:
+                logging.warning("skep bad torrent file dll")
+                pass
             time.sleep(0.5)
 
 # Get cloudflare cookies.
@@ -95,7 +99,7 @@ def get_Rss_Feed(url, cookies):
 # request get .torrent in retry block, and write torrent files.
 
 
-@retry(tries=10, delay=60, jitter=10, logger=logging)
+@retry(tries=3, delay=20, jitter=10, logger=logging)
 def get_Torrents(url, cookies, torrentId):
     headers = {
         'User-agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/532.5 (KHTML, like Gecko) Chrome/4.1.249.1045 Safari/532.5'}
@@ -142,13 +146,14 @@ if __name__ == '__main__':
         serverConfiguration = yaml.load(yamlfile, Loader=yaml.FullLoader)
     # Create folders if doesn't exist.
     os.makedirs("logs", exist_ok=True)
-    os.makedirs("torrents/temp", exist_ok=True)
+    os.makedirs("torrents/tmp", exist_ok=True)
     os.makedirs("rss", exist_ok=True)
     # Logging config
+    LOGLEVEL = os.environ.get("LOGLEVEL", "INFO").upper()
     logging.basicConfig(
         format='%(levelname)s - %(asctime)s ::   %(message)s',
         datefmt='%d/%m/%Y %H:%M:%S',
-        level=logging.DEBUG,
+        level=LOGLEVEL,
         filename="logs/yggnode-resync.log")
     # construct string containing ip and port server for flaresolverr
     flaresolverrPath = f'http://{str(serverConfiguration["flaresolverr"]["ipAdress"])}:{str(serverConfiguration["flaresolverr"]["port"])}'
