@@ -99,7 +99,7 @@ def get_Rss_Feed(url, cookies):
 # request get .torrent in retry block, and write torrent files.
 
 
-@retry(tries=10, delay=60, jitter=10, logger=logging)
+@retry(tries=3, delay=20, jitter=10, logger=logging)
 def get_Torrents(url, cookies, torrentId):
     headers = {
         'User-agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/532.5 (KHTML, like Gecko) Chrome/4.1.249.1045 Safari/532.5'}
