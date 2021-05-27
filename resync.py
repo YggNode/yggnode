@@ -44,7 +44,11 @@ def manage_Torrents(rssData, cookies, idCat, categories, domainName):
         torrentId = re.split("=", fullTorrentId)[1]
         if not os.path.exists(f"torrents/{torrentId}.torrent"):
             url = f"https://{domainName}/rss/download?id={torrentId}&passkey=TNdVQssYfP3GTDnB3ijgE37c8MVvkASH"
-            get_Torrents(url, cookies, torrentId)
+            try:
+                get_Torrents(url, cookies, torrentId)
+            except:
+                logging.warning("skep bad torrent file dll")
+                pass
             time.sleep(0.5)
 
 # Get cloudflare cookies.
