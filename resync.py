@@ -149,10 +149,11 @@ if __name__ == '__main__':
     os.makedirs("torrents/tmp", exist_ok=True)
     os.makedirs("rss", exist_ok=True)
     # Logging config
+    LOGLEVEL = os.environ.get("LOGLEVEL", "INFO").upper()
     logging.basicConfig(
         format='%(levelname)s - %(asctime)s ::   %(message)s',
         datefmt='%d/%m/%Y %H:%M:%S',
-        level=logging.DEBUG,
+        level=LOGLEVEL,
         filename="logs/yggnode-resync.log")
     # construct string containing ip and port server for flaresolverr
     flaresolverrPath = f'http://{str(serverConfiguration["flaresolverr"]["ipAdress"])}:{str(serverConfiguration["flaresolverr"]["port"])}'
