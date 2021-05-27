@@ -5,9 +5,100 @@
     <div class="container">
         <div class="text-center">
         </br>
-            <h1>YggNode : {{ name }}</h1>
+            <h1>YggNode</h1>
             <p class="lead">Fetch Rss from YggTorrent</p>
-            <p>YggNode v2.0.0</p>
+            <p>v2.0.1</p>
+        </div>
+        <div>
+          <h2 id="usage-de-l-api-yggnode">Usage de l&#39;api yggnode</h2>
+          <p>
+            <strong
+              >Serveur de synchronisation des flux rss et .torrents pour
+              <code>yggtorrent.li</code></strong
+            >
+          </p>
+          <p>
+            Le site étant sous protection cloudflare, le projet a pour but de rétablir
+            l&#39;utilisation de ses flux rss :
+          </p>
+          <ul>
+            <li>
+              Pour cela il utilise le projet
+              <a href="https://github.com/FlareSolverr/FlareSolverr">flarrsolverr</a> afin
+              de résoudre le challenge cloudflare et synchronisé régulièrement les flux
+              rss et leur .torrent associez sur le serveur.
+            </li>
+            <li>
+              Une api est ensuite mise a disposition pour lire les flux et dll les
+              .torrent directement depuis le serveur.
+            </li>
+          </ul>
+          <h3 id="pour-les-flux-rss">Pour les flux rss</h3>
+          <p>
+            Example :
+            <code
+              >{{ server }}/rss?id=2139&amp;passkey=Ttw5xQcCbmjHUwC9jCs8fdbrGEnF8yEt</code
+            >
+          </p>
+          <p>Deux arguments sont nécessaire dans l&#39;url :</p>
+          <ul>
+            <li>
+              ID du flux :
+              <a href="{{ url_for('getStatus') }}"
+                >Liste des flux synchronisé sur ce serveur</a
+              >
+            </li>
+            <li>
+              Passkey personnelle : vous trouverait votre passkey sur votre compte ygg
+              <a href="https://www4.yggtorrent.li/user/account">ici</a>, dans la rubrique
+              INFORMATIONS RELATIVES AU TRACKER
+            </li>
+          </ul>
+          <p>
+            Pour facilité l&#39;usage, vous pouvez utilisé le générateur de lien :
+            <a href="{{ url_for('generateLinks') }}">LINKS GENERATOR</a>
+          </p>
+          <ul>
+            <li>renseigné votre passkey</li>
+            <li>
+              Une foi généré copié les lien dans votre client torrent ou lecteur de flux.
+            </li>
+          </ul>
+          <h3 id="statistique-des-derni-re-mise-a-jours">
+            Statistique des dernière mise a jours
+          </h3>
+          <p>
+            Sur la page <a href="{{ url_for('getStatus') }}">STATS</a> se trouve, l&#39;heurs des dernières
+            synchronisations de flux sur le serveur. De temps a autre cloudflare challenge
+            avec un captcha, il sera donc impossible de faire la synchronisation,
+            c&#39;est en générale temporaire. Nous n&#39;avons pour l&#39;instant aucune
+            solution a se problème.
+          </p>
+          <h4 id="disclaimer">Disclaimer</h4>
+          <p>
+            <em
+              >Se service et mis en ligne a define d&#39;experimentation. Nous ne somme en
+              aucun cas liez a yggtorrent.li.</em
+            >
+          </p>
+          <p>
+            <em
+              >Nous vous rappelons que vous devez possédé physiquement l&#39;oeuvre avant
+              d&#39;en téléchargé une copie numérique destiné a votre usage.</em
+            >
+            <em
+              >L&#39;administrateur du site ne peut donc être tenu responsable des action
+              des utilisateurs.</em
+            >
+            <em
+              >Vous ne pouvez donc pas utiliser ce site pour télécharger des fichiers dont
+              vous n&#39;auriez pas les droits légaux pour le faire.</em
+            >
+            <em
+              >C&#39;est de votre responsabilité d&#39;adhérer à ces termes et de
+              respecter ces règles.</em
+            >
+          </p>
         </div>
     </div>
 {% endblock %}
