@@ -7,6 +7,7 @@ import requests
 import time
 import yaml
 import logging
+import dns.resolver
 from retry import retry
 
 # Make Rss Feed URL with config file.
@@ -81,6 +82,7 @@ def get_Cookies(url, domainName):
 
 @retry(tries=10, delay=60, jitter=10, logger=logging)
 def get_Rss_Feed(url, cookies):
+    yggDomain = str(dns.resolver.query("ygg.dathomir.fr", "TXT")[0]).strip('"')
     headers = {
         'User-agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/532.5 (KHTML, like Gecko) Chrome/4.1.249.1045 Safari/532.5'}
     try:
@@ -91,7 +93,7 @@ def get_Rss_Feed(url, cookies):
         logging.warning(
             f"Connection fails try fix : {e}")
         cookies = get_Cookies(
-            flaresolverrPath, serverConfiguration["yggDomainName"])
+            flaresolverrPath, yggDomain)
         logging.debug(
             f"New cookies : {str(cookies)} ")
         raise
@@ -101,6 +103,7 @@ def get_Rss_Feed(url, cookies):
 
 @retry(tries=3, delay=20, jitter=10, logger=logging)
 def get_Torrents(url, cookies, torrentId):
+    yggDomain = str(dns.resolver.query("ygg.dathomir.fr", "TXT")[0]).strip('"')
     headers = {
         'User-agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/532.5 (KHTML, like Gecko) Chrome/4.1.249.1045 Safari/532.5'}
     try:
@@ -116,7 +119,7 @@ def get_Torrents(url, cookies, torrentId):
         logging.warning(
             f"Connection fails try fix with 5 mins delay: {e}")
         cookies = get_Cookies(
-            flaresolverrPath, serverConfiguration["yggDomainName"])
+            flaresolverrPath, yggDomain)
         logging.debug(
             f"New cookies : {str(cookies)} ")
         raise
@@ -164,7 +167,7 @@ if __name__ == '__main__':
     # read category to be syncing on this node.
     catList = serverConfiguration["Categories"]["id"]
     subCatList = serverConfiguration["sub-Categories"]["id"]
-    domainName = serverConfiguration["yggDomainName"]
+    domainName = str(dns.resolver.query("ygg.dathomir.fr", "TXT")[0]).strip('"')
     logging.debug("Successfully load categories to sync")
     # infinite loop to resync every X seconds
     while True:
@@ -204,4 +207,4 @@ if __name__ == '__main__':
                 logging.debug(
                     "Incorrect response : possible cloudfare captcha or new DNS")
         logging.info("Resync terminated : next in 5 mins")
-        time.sleep(300)
+        time.sleep(int (serverConfiguration["refreshTiming"]))

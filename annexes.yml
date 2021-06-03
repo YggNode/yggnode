@@ -22,5 +22,5 @@ Categories:
   id: [2139, 2140, 2141, 2142, 2143, 2144, 2145]
   idLabel: ["Audio", "eBook", "Emulation", "Jeu vidéo", "GPS", "Application", "Film/Vidéo"]
 
-# Variable containing ygg current used domain name
-yggDomainName: "www4.yggtorrent.li"
+# Time laps between two refreshes in seconds
+refreshTiming: 5

@@ -4,7 +4,7 @@ echo "Server must be available for listening at port 443 !"
 read serverAdress
 sudo apt update && sudo apt full-upgrade -y
 sudo apt install python3 python3-pip nginx git apt-transport-https ca-certificates curl software-properties-common -y
-pip3 install flask torrentool gevent gunicorn retry humanize
+pip3 install flask torrentool gevent gunicorn retry humanize dnspython3
 git clone https://github.com/YggNode/yggnode.git
 cronjob="0 * * * * sudo bash $HOME/yggnode/update.sh"
 (sudo crontab -u $USER -l; echo "$cronjob" ) | crontab -u $USER -
