@@ -71,7 +71,7 @@ def get_Cookies(url, domainName):
     for i in json.loads((requests.request("POST", url + "/v1", headers=headers, data=payload)).text).get(
             'solution').get('cookies'):
         cookies[i.get('name')] = i.get('value')
-    if not len(cookies) == 2:
+    if not len(cookies) == 2 and not len(cookies) == 1:
         logging.warning(f'Cookies check - not pass : {str(cookies)}')
         raise ValueError(
             " Bad cookie Possible cloudfare captcha, retry loop... and wait...")
@@ -84,7 +84,7 @@ def get_Cookies(url, domainName):
 def get_Rss_Feed(url, cookies):
     yggDomain = str(dns.resolver.query("ygg.dathomir.fr", "TXT")[0]).strip('"')
     headers = {
-        'User-agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/532.5 (KHTML, like Gecko) Chrome/4.1.249.1045 Safari/532.5'}
+        'User-agent': 'YggRobot'}
     try:
         rss = requests.get(url, cookies=cookies, headers=headers, timeout=25)
         rss.raise_for_status()
@@ -105,7 +105,7 @@ def get_Rss_Feed(url, cookies):
 def get_Torrents(url, cookies, torrentId):
     yggDomain = str(dns.resolver.query("ygg.dathomir.fr", "TXT")[0]).strip('"')
     headers = {
-        'User-agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/532.5 (KHTML, like Gecko) Chrome/4.1.249.1045 Safari/532.5'}
+        'User-agent': 'YggRobot'}
     try:
         rtorrent = requests.get(url, cookies=cookies,
                                 headers=headers, stream=True, timeout=25)
@@ -171,10 +171,11 @@ if __name__ == '__main__':
     logging.debug("Successfully load categories to sync")
     # infinite loop to resync every X seconds
     while True:
-        response = requests.get(f"https://{str(domainName)}", timeout=10)
+        response = requests.get(f"https://{str(domainName)}", timeout=60, headers={'User-agent': 'YggRobot'})
         logging.debug(
             f"Ygg Response : {str(response)} ")
         if not response.ok:
+            logging.info("not ok")
             cookies = get_Cookies(flaresolverrPath, domainName)
             logging.debug(
                 f" Flaresolverr cookies : {str(cookies)} ")
